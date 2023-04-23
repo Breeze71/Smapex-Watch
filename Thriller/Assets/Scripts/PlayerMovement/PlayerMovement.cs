@@ -38,6 +38,10 @@ public class PlayerMovement : MonoBehaviour
     public bool sliding;
     public float slideSpeed;
 
+    [Header("Wallrun")]
+    public bool wallrunning;
+    public float wallrunSpeed;
+
     [Header("Movemetum")]
     public float speedIncreaseMultiple;
     public float slopeIncreaseMutiple;
@@ -60,6 +64,7 @@ public class PlayerMovement : MonoBehaviour
     {
         walking,
         sprinting,
+        wallrunning,
         crouching,
         sliding,
         air,
@@ -122,6 +127,13 @@ public class PlayerMovement : MonoBehaviour
     {
         /* 和 playerInput 分開是因為 getKey, getKeyDown, getKeyUp 問題*/
 
+        // wallrunning
+        if(wallrunning)
+        {
+            state = MovementState.wallrunning;
+            expectedMoveSpeed = wallrunSpeed;
+        }
+
         // sliding
         if(sliding)
         {
@@ -141,7 +153,7 @@ public class PlayerMovement : MonoBehaviour
         }
 
         // crouching
-        else if(Input.GetKey(crouchKey)) // 滑鏟時不會變蹲速
+        else if(grounded && Input.GetKey(crouchKey)) // 滑鏟時不會變蹲速
         {
             state = MovementState.crouching;
             expectedMoveSpeed = crouchSpeed;
