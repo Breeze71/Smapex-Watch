@@ -8,14 +8,14 @@ public class Phyllotaxis : MonoBehaviour
     public float degree, dotCount, dotScale;
     public int num;
 
-    void Start()
-    {
-        
-    }
 
     void Update()
     {
-        GenerateDots();
+        if(Input.GetKey(KeyCode.Q))
+        {
+            GenerateDots();
+            
+        }
     }
 
     private Vector2 CauculatePhyllotaxis(float degree, float scale, int count)
@@ -34,7 +34,7 @@ public class Phyllotaxis : MonoBehaviour
 
     private void GenerateDots()
     {
-        if(Input.GetKey(KeyCode.Space))
+        if(Input.GetKey(KeyCode.A))
         {
             Vector2 phyPos = CauculatePhyllotaxis(degree, dotScale, num);
 

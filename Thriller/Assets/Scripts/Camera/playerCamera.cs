@@ -7,17 +7,20 @@ public class playerCamera : MonoBehaviour
     public float sensX;
     public float sensY;
 
-    public Transform orientation;
+    public Transform orientation, firePoint;
     float xRotation;
     float yRotation;
 
     private void Start() 
     {
         Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;    
+        Cursor.visible = false;
+
+        firePoint.rotation = Quaternion.Euler(0, 0, 0);
     }
 
-    private void Update() 
+    // LateUpdate 最後操作，避免更改攝影機的旋轉可能會與（例如玩家移動）相互干擾，導致視覺上的抖動或不正確的行為。
+    private void LateUpdate() 
     {
         float mouseX = Input.GetAxisRaw("Mouse X")* Time.deltaTime * sensX; // sensitivity
         float mouseY = Input.GetAxisRaw("Mouse Y")* Time.deltaTime * sensY; 
@@ -29,5 +32,7 @@ public class playerCamera : MonoBehaviour
         // rotate the camera and orientation
         transform.rotation = Quaternion.Euler(xRotation, yRotation, 0);
         orientation.rotation = Quaternion.Euler(0, yRotation, 0);   // 玩家模型面向的左右
+
+        firePoint.rotation = Quaternion.Euler(xRotation, yRotation, 0);
     }
 }
