@@ -1,6 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using System.Collections;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -29,10 +28,21 @@ public class PlayerMovement : MonoBehaviour
     public float airMultiplier; // 空中移速
     private bool canJump = true;
 
-    [Header("Slpoe")]
+    [Header("SlpoeMove")]
     public float maxSlopeAngle;
     private RaycastHit slopeHit;
     private bool exitngSlope;
+
+    [Header("Slide")]
+    public bool haveMomentum;   // 避免滑到一半因為 slideCD站起來
+    public bool sliding;
+    public float slideSpeed;
+
+    [Header("Movemetum")]
+    public float speedIncreaseMultiple;
+    public float slopeIncreaseMutiple;
+    private float expectedMoveSpeed;
+    private float finalExpectedMoveSpeed;
 
     [Header("GroundCheck")]
     public float groundDrag;    // 摩擦力
@@ -51,9 +61,11 @@ public class PlayerMovement : MonoBehaviour
         walking,
         sprinting,
         crouching,
+        sliding,
         air,
-
     }
+
+
 
     private void Start()
     {
@@ -65,8 +77,6 @@ public class PlayerMovement : MonoBehaviour
     
     private void Update() 
     {
-        // 玩家半個身長加 0.2 確保 raycast 能打到地面
-        grounded = Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f + 0.2f, GroundMask);
 
         PlayerInput();
         SpeedControl();
@@ -93,7 +103,7 @@ public class PlayerMovement : MonoBehaviour
             Invoke(nameof(JumpReset), jumpCD);            
         }
         // crouh
-        if(Input.GetKeyDown(crouchKey))
+        if(Input.GetKeyDown(crouchKey) && !Input.GetKey(sprintKey)) // 跑步時不會變蹲
         {
             // 縮小一半，但會因為 上下都縮小而滯空
             transform.localScale = new Vector3(transform.localScale.x, crouchYScale, transform.localScale.z);
@@ -111,27 +121,69 @@ public class PlayerMovement : MonoBehaviour
     private void StateController()
     {
         /* 和 playerInput 分開是因為 getKey, getKeyDown, getKeyUp 問題*/
-        if(Input.GetKey(crouchKey))
+
+        // sliding
+        if(sliding)
+        {
+            state = MovementState.sliding;
+            
+            // 在斜坡上滑鏟控制
+            if(OnSlope() && rb.velocity.y < 0.1f)
+            {
+                expectedMoveSpeed = slideSpeed;
+
+                haveMomentum = true;    // 避免滑到一半因為 slideCD站起來 
+            }
+            else
+            {
+                expectedMoveSpeed = sprintSpeed;
+            }
+        }
+
+        // crouching
+        else if(Input.GetKey(crouchKey)) // 滑鏟時不會變蹲速
         {
             state = MovementState.crouching;
-            moveSpeed = crouchSpeed;
+            expectedMoveSpeed = crouchSpeed;
         }
-        
-        // Sprinting
+
+        // sprinting
         else if(grounded && Input.GetKey(sprintKey))
         {
             state = MovementState.sprinting;
-            moveSpeed = sprintSpeed;
+            expectedMoveSpeed = sprintSpeed;
         }
+
+        // walking
         else if(grounded)
         {
             state = MovementState.walking;
-            moveSpeed = walkSpeed;
+            expectedMoveSpeed = walkSpeed;
         }
+
+        // floating
         else
         {
             state = MovementState.air;
         }
+
+        // sprint = 10, walk = 7, 10 - 7 = 3
+        // quick change between sprint and walk
+        // slowly change between fast and slow
+        if(Mathf.Abs(expectedMoveSpeed - finalExpectedMoveSpeed) > 4f && moveSpeed != 0)
+        {
+            StopAllCoroutines();
+            StartCoroutine(SmoothMoveSpeed());
+        }
+        else
+        {
+            // 沒 movementum 後直接變成 expectSpeed
+            moveSpeed = expectedMoveSpeed;
+
+            haveMomentum = false;
+        }
+
+        finalExpectedMoveSpeed = expectedMoveSpeed;
     }
     
     private void MovePlayer()
@@ -141,7 +193,7 @@ public class PlayerMovement : MonoBehaviour
 
         if(OnSlope() && exitngSlope)
         {
-            rb.AddForce(SlopeMoveDirection() * moveSpeed * 20f, ForceMode.Force);
+            rb.AddForce(SlopeMoveDirection(moveDirection) * moveSpeed * 20f, ForceMode.Force);
         }
 
         // ForceMode.Force 施加持續的力。這將導致物體在施加力的方向上加速，直到受到反作用力或其他力的干擾。
@@ -179,9 +231,42 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    /* 用於控制玩家在地面和空中 */
+    /* keep the momentum */
+    private IEnumerator SmoothMoveSpeed()
+    {
+        float time = 0;
+        float difference = Mathf.Abs(expectedMoveSpeed - moveSpeed);
+        float startValue = moveSpeed;
+
+        while(time < difference)
+        {
+            // 由最高速度開始遞減至常規速度
+            moveSpeed = Mathf.Lerp(startValue, expectedMoveSpeed, time / difference);
+
+            if(OnSlope())
+            {
+                // 隨角度增加 movmentum
+                float slopeAngle = Vector3.Angle(Vector3.up, slopeHit.normal);
+                float sloopAngleIncrease = 1 + (slopeAngle / 90f);
+                
+                time += Time.deltaTime * speedIncreaseMultiple * slopeIncreaseMutiple * sloopAngleIncrease;
+            }
+            else
+            {
+                time += Time.deltaTime * speedIncreaseMultiple;
+            }
+
+            yield return null;
+        }
+
+        moveSpeed = expectedMoveSpeed;
+    }
+    
     private void GroundCheck()
     {
+        // 玩家半個身長加 0.2 確保 raycast 能打到地面
+        grounded = Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f + 0.2f, GroundMask);
+
         if(grounded)
             rb.drag = groundDrag;   // 著地時，有摩擦力(避免 addForce 無限增加)
         else
@@ -205,7 +290,7 @@ public class PlayerMovement : MonoBehaviour
         exitngSlope = false;
     }
 
-    private bool OnSlope()
+    public bool OnSlope()
     {                                                     // store what it hit
         if(Physics.Raycast(transform.position, Vector3.down, out slopeHit, playerHeight * 0.5f + 0.3f))
         {
@@ -217,9 +302,9 @@ public class PlayerMovement : MonoBehaviour
         return false;
     }
 
-    private Vector3 SlopeMoveDirection()
+    public Vector3 SlopeMoveDirection(Vector3 direction)
     {
         // 將 Direction 投影到 slopeHit 平面上
-        return Vector3.ProjectOnPlane(moveDirection, slopeHit.normal).normalized;   // 剛好向斜坡下
+        return Vector3.ProjectOnPlane(direction, slopeHit.normal).normalized;   // 剛好向斜坡下
     }
 }

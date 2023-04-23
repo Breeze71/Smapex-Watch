@@ -1322,6 +1322,7 @@ GameObject:
   - component: {fileID: 1521501507}
   - component: {fileID: 1521501508}
   - component: {fileID: 1521501509}
+  - component: {fileID: 1521501511}
   - component: {fileID: 1521501510}
   m_Layer: 0
   m_Name: player
@@ -1338,7 +1339,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1521501506}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -8.13, y: 10.24, z: 0}
+  m_LocalPosition: {x: -8.13, y: 5.8, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1413,6 +1414,26 @@ MonoBehaviour:
   firePoint: {fileID: 70138252}
   fireRate: 4
   QSkillKey: 113
+--- !u!114 &1521501511
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1521501506}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 889df557288c19448a8c8c53062ba0f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  orientation: {fileID: 70138252}
+  player: {fileID: 1264323205}
+  sprintKey: 304
+  slideKey: 306
+  maxSlideTime: 0.75
+  slideForce: 200
+  sliding: 0
+  slideYScale: 0.7
 --- !u!1 &1617584647
 GameObject:
   m_ObjectHideFlags: 0
