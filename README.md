@@ -1,2 +1,2 @@
 # FPS
-a new attempt
+a new attempt for 3D game
