@@ -1,6 +1,6 @@
 using UnityEngine;
 using System.Collections;
-
+// time.deltaTime 以平均不同偵
 public class PlayerMovement : MonoBehaviour
 {
     private Rigidbody rb;
@@ -209,7 +209,6 @@ public class PlayerMovement : MonoBehaviour
         }
 
         // ForceMode.Force 施加持續的力。這將導致物體在施加力的方向上加速，直到受到反作用力或其他力的干擾。
-        // 以受到其他物體的碰撞和物理力的影響。
         if(grounded)
             rb.AddForce(moveDirection.normalized * moveSpeed * 10f, ForceMode.Force);
         else if(!grounded)
@@ -261,11 +260,11 @@ public class PlayerMovement : MonoBehaviour
                 float slopeAngle = Vector3.Angle(Vector3.up, slopeHit.normal);
                 float sloopAngleIncrease = 1 + (slopeAngle / 90f);
                 
-                time += Time.deltaTime * speedIncreaseMultiple * slopeIncreaseMutiple * sloopAngleIncrease;
+                time += Time.fixedDeltaTime * speedIncreaseMultiple * slopeIncreaseMutiple * sloopAngleIncrease;
             }
             else
             {
-                time += Time.deltaTime * speedIncreaseMultiple;
+                time += Time.fixedDeltaTime * speedIncreaseMultiple;
             }
 
             yield return null;

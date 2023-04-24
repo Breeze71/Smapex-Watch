@@ -14,8 +14,8 @@ public class PowerWave : MonoBehaviour
 
     private void Start() 
     {
-        transform.position = new Vector3(transform.position.x , 0 , 0);
-
+        //transform.position = new Vector3(transform.position.x , 0 , 0);
+        /*
         if(GetComponent<Rigidbody>() != null)
         {
             rb = GetComponent<Rigidbody>();
@@ -25,7 +25,7 @@ public class PowerWave : MonoBehaviour
         {
             Debug.Log("no rb");
         }
-
+        */
         Destroy(gameObject , destoryDelay);
     }
 
@@ -47,7 +47,7 @@ public class PowerWave : MonoBehaviour
             }
         }
     }
-
+    
     IEnumerator slowDown()
     {
         float t = 1;
