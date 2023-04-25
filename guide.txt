@@ -1,0 +1,15 @@
+WASD - move
+
+SPACE - jump
+
+LeftShift - run
+
+LeftControl - crouch
+
+Q - grapple
+
+Mouse0 - shoot
+
+MouseWheelUp
+
+MouseWheelDown
