@@ -1,58 +1,67 @@
 using UnityEngine;
+using Unity.Netcode;
+using Unity.Collections;    // fixedString
 using System.Collections;
-// time.deltaTime 以平均不同偵
-public class PlayerMovement : MonoBehaviour
+
+
+public class PlayerMovement : NetworkBehaviour
 {
+    public static PlayerMovement instance
+    {
+        get; 
+        set;
+    }
+
     private Rigidbody rb;
 
     [Header("Movement")]
+    [SerializeField] private float walkSpeed;
+    [SerializeField] private Vector3 moveDirection;
+    [SerializeField] private float moveSpeed;
     public Transform orientation;
-    public float walkSpeed;
-    private Vector3 moveDirection;
-    private float moveSpeed;
 
     [Header("Sprint")]
     public KeyCode sprintKey;
-    public float sprintSpeed;
+    [SerializeField] private float sprintSpeed;
     
     [Header("Crouching")]
     public KeyCode crouchKey;
-    public float crouchSpeed;
-    public float crouchYScale;
-    private float OriginYScale;
+    [SerializeField] private float crouchSpeed;
+    [SerializeField] private float crouchYScale;
+    [SerializeField] private float OriginYScale;
 
     [Header("Jump")]
     public KeyCode jumpKeyCode;
-    public float jumpForce;
-    public float jumpCD;
-    public float airMultiplier; // 空中移速
+    [SerializeField] private float jumpForce;
+    [SerializeField] private float jumpCD;
+    [SerializeField] private float airMultiplier; // 空中移速
     private bool canJump = true;
 
     [Header("SlpoeMove")]
-    public float maxSlopeAngle;
+    [SerializeField] private float maxSlopeAngle;
     private RaycastHit slopeHit;
     private bool exitngSlope;
 
     [Header("Slide")]
     public bool haveMomentum;   // 避免滑到一半因為 slideCD站起來
     public bool sliding;
-    public float slideSpeed;
+    [SerializeField] private float slideSpeed;
 
     [Header("Wallrun")]
     public bool wallrunning;
-    public float wallrunSpeed;
+    [SerializeField] private float wallrunSpeed;
 
     [Header("Movemetum")]
-    public float speedIncreaseMultiple;
-    public float slopeIncreaseMutiple;
-    private float expectedMoveSpeed;
-    private float finalExpectedMoveSpeed;
+    [SerializeField] private float speedIncreaseMultiple;
+    [SerializeField] private float slopeIncreaseMutiple;
+    [SerializeField] private float expectedMoveSpeed;
+    [SerializeField] private float finalExpectedMoveSpeed;
 
     [Header("GroundCheck")]
-    public float groundDrag;    // 摩擦力
-    public float playerHeight;
-    public LayerMask GroundMask;
-    private bool grounded;
+    [SerializeField] private float groundDrag;    // 摩擦力
+    [SerializeField] private float playerHeight;
+    [SerializeField] private LayerMask GroundMask;
+    [SerializeField] private bool grounded;
     
     [Header("InputAxis")]
     private float horizontalInput;
@@ -70,25 +79,68 @@ public class PlayerMovement : MonoBehaviour
         air,
     }
 
-
-
     private void Start()
     {
+        instance = this;
         rb = GetComponent<Rigidbody>();
         rb.freezeRotation = true;   // 確保開始時不會受到旋轉的干擾穿模
 
         OriginYScale = transform.localScale.y;
-    }
+    }   
     
+    /**/
+    // netWork variable
+    private NetworkVariable<int> text1 = new NetworkVariable<int>(1, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+    private NetworkVariable<MyCustomData> text2 = new NetworkVariable<MyCustomData>(
+        new MyCustomData
+        {
+            _int = 56,
+            _bool = true,
+        },
+        NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+    // struct for variable
+    public struct MyCustomData : INetworkSerializable
+    {
+        public int _int;
+        public bool _bool;
+        public FixedString128Bytes message;
+
+        public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
+        {
+            serializer.SerializeValue(ref _int);
+            serializer.SerializeValue(ref _bool);
+            serializer.SerializeValue(ref message);
+        }
+    }
+    // start()
+    public override void OnNetworkSpawn()
+    {
+        text2.OnValueChanged += (MyCustomData previousValue, MyCustomData newValue) => {
+            Debug.Log(OwnerClientId + ";" + newValue._int + ";" + newValue._bool + ";" + newValue.message);
+        };
+    }
+    /**/
+
     private void Update() 
     {
+        // not owner
+        if(!IsOwner)
+            return;
+        if(Input.GetKeyDown(KeyCode.T))
+        {
+            text2.Value = new MyCustomData{
+                _int = 10,
+                _bool = false,
+                message = "wow"
+            };
+        }
 
+        /**/
         PlayerInput();
         SpeedControl();
         StateController();
         GroundCheck();
     }
-    
     private void FixedUpdate() 
     {
         MovePlayer();

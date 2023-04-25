@@ -146,6 +146,7 @@ GameObject:
   - component: {fileID: 7444311631893401854}
   - component: {fileID: 7444311631893401853}
   - component: {fileID: 7444311631893401852}
+  - component: {fileID: -2194686822913864759}
   m_Layer: 0
   m_Name: player
   m_TagString: Untagged
@@ -169,7 +170,7 @@ Transform:
   - {fileID: 7444311630794386491}
   - {fileID: 7444311632202435417}
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!54 &7444311631893401843
 Rigidbody:
@@ -199,13 +200,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d626ddd6be6b18d4d9b253b45d6bb8b7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  orientation: {fileID: 7444311630794386491}
   walkSpeed: 7
+  moveDirection: {x: 0, y: 0, z: 0}
+  moveSpeed: 0
+  orientation: {fileID: 7444311630794386491}
   sprintKey: 304
   sprintSpeed: 10
   crouchKey: 306
   crouchSpeed: 4
   crouchYScale: 0.5
+  OriginYScale: 0
   jumpKeyCode: 32
   jumpForce: 12
   jumpCD: 0.25
@@ -218,11 +222,14 @@ MonoBehaviour:
   wallrunSpeed: 8.5
   speedIncreaseMultiple: 1.5
   slopeIncreaseMutiple: 2.5
+  expectedMoveSpeed: 0
+  finalExpectedMoveSpeed: 0
   groundDrag: 4
   playerHeight: 2
   GroundMask:
     serializedVersion: 2
     m_Bits: 8
+  grounded: 0
   state: 0
 --- !u!114 &7444311631893401840
 MonoBehaviour:
@@ -298,8 +305,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: afd84c771eb58ff4e8dfbfb364fafa73, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cam: {fileID: 0}
-  firePoint: {fileID: 0}
   throwObj: {fileID: 3149742676657999058, guid: bc35f68e3224455468f1d9faeae58e2c,
     type: 3}
   throwKey: 323
@@ -337,6 +342,32 @@ MonoBehaviour:
   AlwaysReplicateAsRoot: 0
   DontDestroyWithOwner: 0
   AutoObjectParentSync: 1
+--- !u!114 &-2194686822913864759
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7444311631893401845}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3888257501891de42b30b11e846d0ca1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SyncPositionX: 1
+  SyncPositionY: 1
+  SyncPositionZ: 1
+  SyncRotAngleX: 1
+  SyncRotAngleY: 1
+  SyncRotAngleZ: 1
+  SyncScaleX: 1
+  SyncScaleY: 1
+  SyncScaleZ: 1
+  PositionThreshold: 0.001
+  RotAngleThreshold: 0.01
+  ScaleThreshold: 0.01
+  InLocalSpace: 0
+  Interpolate: 1
 --- !u!1 &7444311632202435418
 GameObject:
   m_ObjectHideFlags: 0

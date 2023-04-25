@@ -26,7 +26,6 @@ public class WallRunning : MonoBehaviour
 
     [Header("References")]
     public Transform orientation;
-    private PlayerMovement movementScript;
     private Rigidbody rb;
     private float horizontalInput;
     private float verticalInput;
@@ -34,7 +33,6 @@ public class WallRunning : MonoBehaviour
     private void Start() 
     {
         rb = GetComponent<Rigidbody>();
-        movementScript = GetComponent<PlayerMovement>();
     }
     private void Update() 
     {
@@ -43,7 +41,7 @@ public class WallRunning : MonoBehaviour
     }
     private void FixedUpdate() 
     {
-        if(movementScript.wallrunning)
+        if(PlayerMovement.instance.wallrunning)
             WallRunMovement();
     }
 
@@ -58,12 +56,12 @@ public class WallRunning : MonoBehaviour
         // wallrunning
         if((isWallLeft || isWallRight) && (horizontalInput != 0 || verticalInput !=0 ) && !GroundCheck())
         {
-            if(!movementScript.wallrunning)
+            if(!PlayerMovement.instance.wallrunning)
                 StartWallRun();
         }
         else
         {
-            if(movementScript.wallrunning)
+            if(PlayerMovement.instance.wallrunning)
                 StopWallRun();
         }
     }
@@ -100,11 +98,11 @@ public class WallRunning : MonoBehaviour
 
     private void StartWallRun()
     {
-        movementScript.wallrunning = true;
+        PlayerMovement.instance.wallrunning = true;
     }
     private void StopWallRun()
     {
-        movementScript.wallrunning = false;
+        PlayerMovement.instance.wallrunning = false;
         rb.useGravity = true;
     }
 

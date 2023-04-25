@@ -1,21 +1,19 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Throw : MonoBehaviour
 {
     [Header("References")]
-    public Transform cam;
-    public Transform firePoint;
     public GameObject throwObj;
     public KeyCode throwKey;
+    [SerializeField] private Transform cam;
+    [SerializeField] private Transform firePoint;
 
     [Header("Throwing")]
-    public float throwForce;
-    public float throwUpwordForce;
-    public int totalAmmo;
-    public float throwCD;
-    public float fireRange;
+    [SerializeField] private float throwForce;
+    [SerializeField] private float throwUpwordForce;
+    [SerializeField] private int totalAmmo;
+    [SerializeField] private float throwCD;
+    [SerializeField] private float fireRange;
     private bool readyToThrow;
 
     private void Start()
