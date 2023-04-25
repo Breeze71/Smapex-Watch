@@ -4,7 +4,7 @@ using Unity.Collections;    // fixedString
 using System.Collections;
 
 
-public class PlayerMovement : NetworkBehaviour
+public class PlayerMovement : MonoBehaviour
 {
     public static PlayerMovement instance
     {
@@ -16,8 +16,8 @@ public class PlayerMovement : NetworkBehaviour
 
     [Header("Movement")]
     [SerializeField] private float walkSpeed;
-    [SerializeField] private Vector3 moveDirection;
-    [SerializeField] private float moveSpeed;
+    private float moveSpeed;
+    private Vector3 moveDirection;
     public Transform orientation;
 
     [Header("Sprint")]
@@ -50,12 +50,17 @@ public class PlayerMovement : NetworkBehaviour
     [Header("Wallrun")]
     public bool wallrunning;
     [SerializeField] private float wallrunSpeed;
+    
+    [Header("Grapple")]
+    [SerializeField] private float swingSpeed;
+    public bool activeGrapple;
+    public bool swinging;
 
     [Header("Movemetum")]
     [SerializeField] private float speedIncreaseMultiple;
     [SerializeField] private float slopeIncreaseMutiple;
-    [SerializeField] private float expectedMoveSpeed;
-    [SerializeField] private float finalExpectedMoveSpeed;
+    private float expectedMoveSpeed;
+    private float finalExpectedMoveSpeed;
 
     [Header("GroundCheck")]
     [SerializeField] private float groundDrag;    // 摩擦力
@@ -71,6 +76,7 @@ public class PlayerMovement : NetworkBehaviour
     public MovementState state;
     public enum MovementState
     {
+        swinging,
         walking,
         sprinting,
         wallrunning,
@@ -88,7 +94,7 @@ public class PlayerMovement : NetworkBehaviour
         OriginYScale = transform.localScale.y;
     }   
     
-    /**/
+    /*
     // netWork variable
     private NetworkVariable<int> text1 = new NetworkVariable<int>(1, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
     private NetworkVariable<MyCustomData> text2 = new NetworkVariable<MyCustomData>(
@@ -119,10 +125,11 @@ public class PlayerMovement : NetworkBehaviour
             Debug.Log(OwnerClientId + ";" + newValue._int + ";" + newValue._bool + ";" + newValue.message);
         };
     }
-    /**/
+    */
 
     private void Update() 
     {
+        /*
         // not owner
         if(!IsOwner)
             return;
@@ -133,7 +140,7 @@ public class PlayerMovement : NetworkBehaviour
                 _bool = false,
                 message = "wow"
             };
-        }
+        }*/
 
         /**/
         PlayerInput();
@@ -192,7 +199,7 @@ public class PlayerMovement : NetworkBehaviour
             state = MovementState.sliding;
             
             // 在斜坡上滑鏟控制
-            if(OnSlope() && rb.velocity.y < 0.1f)
+            if((OnSlope() && rb.velocity.y < 0.1f))
             {
                 expectedMoveSpeed = slideSpeed;
 
@@ -202,6 +209,13 @@ public class PlayerMovement : NetworkBehaviour
             {
                 expectedMoveSpeed = sprintSpeed;
             }
+        }
+
+        // swinging
+        else if(swinging)
+        {
+            state = MovementState.swinging;
+            moveSpeed = swingSpeed;
         }
 
         // crouching
@@ -252,6 +266,10 @@ public class PlayerMovement : NetworkBehaviour
     
     private void MovePlayer()
     {
+        // 避免牛頓詐屍
+        if(swinging)
+            return;
+
         // moveDirection
         moveDirection = orientation.forward * verticalInput + orientation.right * horizontalInput;
 
@@ -281,7 +299,7 @@ public class PlayerMovement : NetworkBehaviour
         }
 
         // limiting speed on ground or air
-        else
+        else// if(!swinging)
         {
             Vector3 flatVelocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
 
