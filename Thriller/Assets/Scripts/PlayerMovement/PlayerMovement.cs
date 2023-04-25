@@ -203,7 +203,7 @@ public class PlayerMovement : MonoBehaviour
             {
                 expectedMoveSpeed = slideSpeed;
 
-                haveMomentum = true;    // 避免滑到一半因為 slideCD站起來 
+                //haveMomentum = true;    // 避免滑到一半因為 slideCD站起來 
             }
             else
             {
@@ -258,7 +258,7 @@ public class PlayerMovement : MonoBehaviour
             // 沒 movementum 後直接變成 expectSpeed
             moveSpeed = expectedMoveSpeed;
 
-            haveMomentum = false;
+            //haveMomentum = false;
         }
 
         finalExpectedMoveSpeed = expectedMoveSpeed;

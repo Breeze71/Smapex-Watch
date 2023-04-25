@@ -8,7 +8,6 @@ public class Sliding : MonoBehaviour
     public Transform orientation;
     public Transform player;
     private Rigidbody rb;
-    private PlayerMovement movementScript;
 
     [Header("Sliging")]
     public KeyCode sprintKey;
@@ -27,7 +26,6 @@ public class Sliding : MonoBehaviour
     private void Start() 
     {
         rb = GetComponent<Rigidbody>();
-        movementScript = GetComponent<PlayerMovement>();
 
         startYScale = player.localScale.y;
     }
@@ -41,13 +39,13 @@ public class Sliding : MonoBehaviour
         if(Input.GetKeyDown(slideKey) && Input.GetKey(sprintKey) && (horizontalInput != 0 || verticalInput != 0))
             StartSlide();
         // stopSlide
-        if(Input.GetKeyUp(slideKey) && movementScript.sliding && movementScript.haveMomentum)
+        if(Input.GetKeyUp(slideKey) && PlayerMovement.instance.sliding) //&& movementScript.haveMomentum    // 滑鏟控制
             StopSlide();
     }
 
     private void FixedUpdate() 
     {
-        if(movementScript.sliding)
+        if(PlayerMovement.instance.sliding)
             SlideMovement(); 
     }
 
@@ -56,7 +54,7 @@ public class Sliding : MonoBehaviour
         Vector3 slideDirection = orientation.forward * verticalInput + orientation.right * horizontalInput;
 
         // normalSlide
-        if(!movementScript.OnSlope() || rb.velocity.y > -0.1)
+        if(!PlayerMovement.instance.OnSlope() || rb.velocity.y > -0.1)
         {
             rb.AddForce(slideDirection.normalized * slideForce, ForceMode.Force);
 
@@ -67,12 +65,12 @@ public class Sliding : MonoBehaviour
         }
         else
         {
-            rb.AddForce(movementScript.SlopeMoveDirection(slideDirection) * slideForce, ForceMode.Force);
+            rb.AddForce(PlayerMovement.instance.SlopeMoveDirection(slideDirection) * slideForce, ForceMode.Force);
         }
     }
     private void StartSlide()
     {
-        movementScript.sliding = true;
+        PlayerMovement.instance.sliding = true;
 
         player.localScale = new Vector3(player.localScale.x, slideYScale, player.localScale.z);
         rb.AddForce(Vector3.down * 5f, ForceMode.Impulse); // 避免浮空
@@ -81,7 +79,7 @@ public class Sliding : MonoBehaviour
     }
     private void StopSlide()
     {
-        movementScript.sliding = false;
+        PlayerMovement.instance.sliding = false;
         player.localScale = new Vector3(player.localScale.x, startYScale, player.localScale.z);
     }
 }
