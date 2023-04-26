@@ -268,7 +268,7 @@ PrefabInstance:
     - target: {fileID: 7444311631893401844, guid: 1cf656291b55f584b8ca8b537f54a7b7,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.79
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7444311631893401844, guid: 1cf656291b55f584b8ca8b537f54a7b7,
         type: 3}
@@ -870,6 +870,18 @@ PrefabInstance:
     serializedVersion: 2
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 727484578, guid: 1da193ab34e9dfc489310a419fa30bbf, type: 3}
+      propertyPath: m_Name
+      value: gunTipLeft
+      objectReference: {fileID: 0}
+    - target: {fileID: 727484579, guid: 1da193ab34e9dfc489310a419fa30bbf, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 727484579, guid: 1da193ab34e9dfc489310a419fa30bbf, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.7
+      objectReference: {fileID: 0}
     - target: {fileID: 9178331333371927219, guid: 1da193ab34e9dfc489310a419fa30bbf,
         type: 3}
       propertyPath: orientation
@@ -1007,7 +1019,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &701066490
 RectTransform:
   m_ObjectHideFlags: 0
