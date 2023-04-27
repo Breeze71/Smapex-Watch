@@ -267,11 +267,15 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8
   wallRunForce: 200
-  wallRunTime: 1.5
+  wallRunTime: 2
   wallClimbSpeed: 1
+  wallJumpFoce: 7
+  wallJumpSideForce: 18
+  jumpKey: 32
   wallCheckDistance: 1.2
   minJumpHight: 2
   upwardClimbKey: 119
+  exitingWallTime: 0.1
   orientation: {fileID: 7444311630794386491}
 --- !u!114 &7444311631893401841
 MonoBehaviour:

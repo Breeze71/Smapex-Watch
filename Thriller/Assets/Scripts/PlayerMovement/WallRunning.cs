@@ -4,14 +4,24 @@ using UnityEngine;
 
 public class WallRunning : MonoBehaviour
 {
+    #region WallRun
     [Header("Wallrunning")]
-    public LayerMask wallLayer;
-    public LayerMask groundLayer;
-    public float wallRunForce;
-    public float wallRunTime;
-    public float wallClimbSpeed;//
-    private float wallRunTimer;
+    [SerializeField] private LayerMask wallLayer;
+    [SerializeField] private LayerMask groundLayer;
+    [SerializeField] public float wallRunForce;
+    [SerializeField] public float wallRunTime;
+    [SerializeField] private float wallClimbSpeed;//
+    [SerializeField] private float wallRunTimer;
+    #endregion
 
+    #region wallJump
+    [Header("WallJump")]
+    [SerializeField] private float wallJumpFoce;
+    [SerializeField] private float wallJumpSideForce;
+    [SerializeField] private KeyCode jumpKey;
+    #endregion
+
+    #region Detection
     [Header("Detection")]
     public float wallCheckDistance;
     public float minJumpHight;
@@ -23,12 +33,22 @@ public class WallRunning : MonoBehaviour
     //public KeyCode downwardClimbKey;//
     private bool upwardClimb;//
     //private bool downwardClimb;//
+    #endregion
 
+    #region Exiting
+    [Header("Exiting")]
+    [SerializeField] private float exitingWallTime;
+    private bool exitingWall;
+    private float exitingWallTimer;
+    #endregion
+
+    #region References
     [Header("References")]
-    public Transform orientation;
+    [SerializeField] private Transform orientation;
     private Rigidbody rb;
     private float horizontalInput;
     private float verticalInput;
+    #endregion
 
     private void Start() 
     {
@@ -54,18 +74,56 @@ public class WallRunning : MonoBehaviour
         //downwardClimb = Input.GetKey(downwardClimbKey);//
 
         // wallrunning
-        if((isWallLeft || isWallRight) && (horizontalInput != 0 || verticalInput !=0 ) && !GroundCheck())
+        if((isWallLeft || isWallRight) && (horizontalInput != 0 || verticalInput !=0 ) && !GroundCheck() && !exitingWall)
         {
             if(!PlayerMovement.instance.wallrunning)
+            {
                 StartWallRun();
+                Debug.Log("startWallRun");
+            }
+
+            // wallRunTime
+            if(wallRunTimer > 0)
+            {
+                wallRunTimer -= Time.fixedDeltaTime;
+            }
+            if(wallRunTimer <= 0 && PlayerMovement.instance.wallrunning)
+            {
+                StopWallRun();
+                exitingWall = true;
+            }
+
+            // wallJump
+            if(Input.GetKeyDown(jumpKey))
+            {
+                WallJump();
+            }
         }
-        else
+
+        // exiting wall (避免前一偵剛跳，下一偵又 wallRun)
+        else if(exitingWall)
         {
             if(PlayerMovement.instance.wallrunning)
                 StopWallRun();
+
+            if(exitingWallTimer > 0)
+                exitingWallTimer -= Time.fixedDeltaTime;
+
+            if(exitingWallTimer <= 0)
+                exitingWall = false;
+        }
+
+        else
+        {
+            if(PlayerMovement.instance.wallrunning)
+            {
+                StopWallRun();
+                Debug.Log("stopWallRun");
+            }
         }
     }
 
+    #region wallRun
     private void WallRunMovement()
     {
         rb.useGravity = false;
@@ -99,13 +157,34 @@ public class WallRunning : MonoBehaviour
     private void StartWallRun()
     {
         PlayerMovement.instance.wallrunning = true;
+
+        wallRunTimer = wallRunTime;
     }
     private void StopWallRun()
     {
         PlayerMovement.instance.wallrunning = false;
         rb.useGravity = true;
     }
+    #endregion
+    
+    #region wallJump
+    private void WallJump()
+    {
+        exitingWall = true;
+        exitingWallTimer = exitingWallTime;
 
+        Vector3 wallNormal = isWallRight ? rightWallHit.normal : leftWallHit.normal;
+
+        // 除了往上還要往對面推
+        Vector3 JumpForce = transform.up * wallJumpFoce + wallNormal * wallJumpSideForce;
+
+        // reset y even falling
+        rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
+        rb.AddForce(JumpForce, ForceMode.Impulse);
+    }
+    #endregion
+
+    #region wallCheck
     /* ground and wall check */
     private void CheckForWall()
     {
@@ -117,4 +196,7 @@ public class WallRunning : MonoBehaviour
         // 離開地面才能 wallrun
         return Physics.Raycast(transform.position, Vector3.down, minJumpHight, groundLayer);
     }
+    #endregion
+
+
 }

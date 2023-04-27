@@ -194,7 +194,7 @@ public class PlayerMovement : MonoBehaviour
         }
 
         // sliding
-        if(sliding)
+        else if(sliding)
         {
             state = MovementState.sliding;
             

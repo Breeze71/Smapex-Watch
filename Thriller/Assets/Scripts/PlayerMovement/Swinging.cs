@@ -8,9 +8,18 @@ public class Swinging : MonoBehaviour
     [SerializeField] private float horizontalGasForce;
     [SerializeField] private float forwardGasForce;
     [SerializeField] private float extendCableSpeed;
+    [SerializeField] private float shrinkRopeMutiplier = 2f;
+    [SerializeField] private KeyCode forwardGasKey;
+    [SerializeField] private KeyCode leftGasKey;
+    [SerializeField] private KeyCode rightGasKey;
+    /*
+    [SerializeField] private KeyCode shrinkCappleKey;
+    [SerializeField] private KeyCode extendCappleKey;*/
+
+    private float lastDistance;
     #endregion
 
-    #region GasMovement
+    #region References
     [Header("References")]
     [SerializeField] private float maxSwingDistance;
     [SerializeField] private  Rigidbody rb;
@@ -129,12 +138,12 @@ public class Swinging : MonoBehaviour
     private void gasMovement()
     {   
         // gas
-        if(Input.GetKey(KeyCode.A))
+        if(Input.GetKey(leftGasKey))
             rb.AddForce(- PlayerMovement.instance.orientation.right * horizontalGasForce * Time.deltaTime);
-        if(Input.GetKey(KeyCode.D))
+        if(Input.GetKey(rightGasKey))
             rb.AddForce(PlayerMovement.instance.orientation.right * horizontalGasForce * Time.deltaTime);
 
-        if(Input.GetKey(KeyCode.W))
+        if(Input.GetKey(forwardGasKey))
             rb.AddForce(PlayerMovement.instance.orientation.forward * forwardGasForce * Time.deltaTime);
 
 
@@ -156,7 +165,7 @@ public class Swinging : MonoBehaviour
         {
             // 隨距離產生加速效果
             Vector3 directionToPoint = pullPoint - transform.position;
-            rb.AddForce(directionToPoint.normalized * forwardGasForce * Time.deltaTime);
+            rb.AddForce(directionToPoint.normalized * forwardGasForce * shrinkRopeMutiplier * Time.deltaTime);
 
             float distanceFromPoint = Vector3.Distance(transform.position, pullPoint);
 
@@ -230,6 +239,9 @@ public class Swinging : MonoBehaviour
 
     private void UpdateJoinsLenths(float distanceFromPoint)
     {
+        float currentDistanceFromPoint;// 移動後距離
+        currentDistanceFromPoint = Mathf.Lerp(lastDistance, distanceFromPoint, Time.fixedDeltaTime * 8f);
+
         for(int i = 0; i < joints.Count; i++)
         {
             if(joints[i] != null)
@@ -238,5 +250,7 @@ public class Swinging : MonoBehaviour
                 joints[i].minDistance = distanceFromPoint * 0.25f;
             }
         }
+
+        lastDistance = distanceFromPoint;// 移動前距離
     }
 }

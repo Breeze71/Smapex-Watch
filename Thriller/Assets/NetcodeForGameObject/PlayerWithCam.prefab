@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 1010788845}
   - component: {fileID: 1010788848}
   - component: {fileID: 1010788847}
-  - component: {fileID: 1010788846}
   m_Layer: 0
   m_Name: PredictoinPoint (1)
   m_TagString: Untagged
@@ -62,7 +61,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: d924463e7136b9648837213772342095, type: 2}
+  - {fileID: 2100000, guid: 121d33315c61acb49b9d556e6a3ef3cb, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -84,19 +83,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!135 &1010788846
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1010788844}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 0
-  serializedVersion: 2
-  m_Radius: 0.5
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1303240470421558808
 GameObject:
   m_ObjectHideFlags: 0
@@ -108,7 +94,6 @@ GameObject:
   - component: {fileID: 8696234519327424277}
   - component: {fileID: 2514707589543741544}
   - component: {fileID: 3264072051454196247}
-  - component: {fileID: 4505949776768024131}
   m_Layer: 0
   m_Name: PredictoinPoint
   m_TagString: Untagged
@@ -159,7 +144,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: d924463e7136b9648837213772342095, type: 2}
+  - {fileID: 2100000, guid: 121d33315c61acb49b9d556e6a3ef3cb, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -181,19 +166,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!135 &4505949776768024131
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1303240470421558808}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 0
-  serializedVersion: 2
-  m_Radius: 0.5
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &2614380231519009100
 GameObject:
   m_ObjectHideFlags: 0
@@ -237,6 +209,14 @@ PrefabInstance:
     serializedVersion: 2
     m_TransformParent: {fileID: 5534326519400572240}
     m_Modifications:
+    - target: {fileID: 1573196333, guid: 1da193ab34e9dfc489310a419fa30bbf, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: cbc6a011cb068b44291ab4ba3cd0d63b, type: 2}
+    - target: {fileID: 2075999458, guid: 1da193ab34e9dfc489310a419fa30bbf, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: cbc6a011cb068b44291ab4ba3cd0d63b, type: 2}
     - target: {fileID: 9178331333371927219, guid: 1da193ab34e9dfc489310a419fa30bbf,
         type: 3}
       propertyPath: orientation
@@ -442,6 +422,31 @@ PrefabInstance:
       propertyPath: firePoint
       value: 
       objectReference: {fileID: 9032577767006018593}
+    - target: {fileID: 7444311631893401855, guid: 1cf656291b55f584b8ca8b537f54a7b7,
+        type: 3}
+      propertyPath: jumpKey
+      value: 32
+      objectReference: {fileID: 0}
+    - target: {fileID: 7444311631893401855, guid: 1cf656291b55f584b8ca8b537f54a7b7,
+        type: 3}
+      propertyPath: wallRunTime
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7444311631893401855, guid: 1cf656291b55f584b8ca8b537f54a7b7,
+        type: 3}
+      propertyPath: wallJumpFoce
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 7444311631893401855, guid: 1cf656291b55f584b8ca8b537f54a7b7,
+        type: 3}
+      propertyPath: exitingWallTime
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7444311631893401855, guid: 1cf656291b55f584b8ca8b537f54a7b7,
+        type: 3}
+      propertyPath: wallJumpSideForce
+      value: 18
+      objectReference: {fileID: 0}
     - target: {fileID: 8316084989237030164, guid: 1cf656291b55f584b8ca8b537f54a7b7,
         type: 3}
       propertyPath: cam

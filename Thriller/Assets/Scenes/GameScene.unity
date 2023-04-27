@@ -978,7 +978,7 @@ BoxCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 959580794}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: 6d161cc7ba7b4e24fba8b1456c2d4294, type: 2}
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
@@ -1313,10 +1313,59 @@ PrefabInstance:
     serializedVersion: 2
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1010788847, guid: f9dab9abe5425844993dd5ac57b3eb42, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 121d33315c61acb49b9d556e6a3ef3cb, type: 2}
+    - target: {fileID: 145753628278378244, guid: f9dab9abe5425844993dd5ac57b3eb42,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: cbc6a011cb068b44291ab4ba3cd0d63b, type: 2}
+    - target: {fileID: 145753628714066379, guid: f9dab9abe5425844993dd5ac57b3eb42,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: cbc6a011cb068b44291ab4ba3cd0d63b, type: 2}
     - target: {fileID: 2614380231519009100, guid: f9dab9abe5425844993dd5ac57b3eb42,
         type: 3}
       propertyPath: m_Name
       value: PlayerWithCam
+      objectReference: {fileID: 0}
+    - target: {fileID: 3264072051454196247, guid: f9dab9abe5425844993dd5ac57b3eb42,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 121d33315c61acb49b9d556e6a3ef3cb, type: 2}
+    - target: {fileID: 5166017413211313678, guid: f9dab9abe5425844993dd5ac57b3eb42,
+        type: 3}
+      propertyPath: jumpKey
+      value: 32
+      objectReference: {fileID: 0}
+    - target: {fileID: 5166017413211313678, guid: f9dab9abe5425844993dd5ac57b3eb42,
+        type: 3}
+      propertyPath: wallRunTime
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5166017413211313678, guid: f9dab9abe5425844993dd5ac57b3eb42,
+        type: 3}
+      propertyPath: wallJumpFoce
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 5166017413211313678, guid: f9dab9abe5425844993dd5ac57b3eb42,
+        type: 3}
+      propertyPath: wallClimbSpeed
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5166017413211313678, guid: f9dab9abe5425844993dd5ac57b3eb42,
+        type: 3}
+      propertyPath: exitingWallTime
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5166017413211313678, guid: f9dab9abe5425844993dd5ac57b3eb42,
+        type: 3}
+      propertyPath: wallJumpSideForce
+      value: 18
       objectReference: {fileID: 0}
     - target: {fileID: 5534326519400572240, guid: f9dab9abe5425844993dd5ac57b3eb42,
         type: 3}
@@ -1372,6 +1421,26 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6023084801421978597, guid: f9dab9abe5425844993dd5ac57b3eb42,
+        type: 3}
+      propertyPath: leftGasKey
+      value: 97
+      objectReference: {fileID: 0}
+    - target: {fileID: 6023084801421978597, guid: f9dab9abe5425844993dd5ac57b3eb42,
+        type: 3}
+      propertyPath: rightGasKey
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 6023084801421978597, guid: f9dab9abe5425844993dd5ac57b3eb42,
+        type: 3}
+      propertyPath: forwardGasKey
+      value: 119
+      objectReference: {fileID: 0}
+    - target: {fileID: 6023084801421978597, guid: f9dab9abe5425844993dd5ac57b3eb42,
+        type: 3}
+      propertyPath: shrinkRopeMutiplier
+      value: 1.5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_AddedGameObjects: []
@@ -1794,7 +1863,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1263901541}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 26.03, y: 2.82, z: -0.98}
+  m_LocalPosition: {x: -9.8, y: 2.82, z: 8.1}
   m_LocalScale: {x: 18.95, y: 5, z: 0.25}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1808,7 +1877,7 @@ BoxCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1263901541}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: 6d161cc7ba7b4e24fba8b1456c2d4294, type: 2}
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
