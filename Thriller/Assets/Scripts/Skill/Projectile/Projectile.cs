@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class Projectile : MonoBehaviour
 {
-    public float damage;
+    [SerializeField] private float damage;
     private Rigidbody rb;
     private bool hitTarget;
 
@@ -16,6 +16,7 @@ public class Projectile : MonoBehaviour
     private void Start() 
     {
         rb = GetComponent<Rigidbody>();
+        
         Destroy(gameObject, 5);
     }
 
@@ -23,10 +24,10 @@ public class Projectile : MonoBehaviour
     {
         // interface - IDamagable
         IDamagable damagable = collider.gameObject.GetComponent<IDamagable>();
+        
         if(damagable != null)
-        {
-            damagable.TakeDamage(damage);
-            Destroy(gameObject);
-        }
+            damagable.TakeDamage(damage, collider.transform.position);
+
+        Destroy(this.gameObject);
     }
 }

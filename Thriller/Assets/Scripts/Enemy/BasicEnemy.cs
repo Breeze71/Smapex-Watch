@@ -2,11 +2,10 @@ using UnityEngine;
 
 public class BasicEnemy : MonoBehaviour, IDamagable
 {
-    [SerializeField] private float maxHealth;
+    public float maxHealth;
     private float health;
-
-    // IDamagable
-    public void TakeDamage(float damage)
+    
+    public void TakeDamage(float damage, Vector3 hitPoint)
     {
         health -= damage;
     }
