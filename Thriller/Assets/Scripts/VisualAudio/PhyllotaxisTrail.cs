@@ -1,40 +1,80 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PhyllotaxisTrail : MonoBehaviour
 {
+    #region AudioSample
+    [Header("AudioSample")]
+    private Material trailMaterial;
+    [SerializeField] private Color trailColor;
+    #endregion
+    
     [Header("Trail")]
-    public float degree, dotScale;
-    public int numberStart;
     private int num;
     private Vector2 phyllotaxisPos;
     private TrailRenderer trailRenderer;
+    [SerializeField] private float degree, dotScale;
+    [SerializeField] private int numberStart;
 
     [Header("Lerp")]
-    public bool useLerp;
-    public bool isLerping;
-    public float lerpInterval;
-    public int maxIteration;
-    public int stepSize;
+    private bool isLerping;
     private int currentIteration; 
     private Vector3 startPosition, endPosition;
-    private float timeStartLerping;
+    [SerializeField] private bool useLerp;
+    [SerializeField] private int maxIteration;
+    [SerializeField] private int stepSize;
+
+    [Header("Audio Lerp")]
+
+    private float lerpPostimer, lerpPosSpeed;
+    [SerializeField] private int lerpPosBand;
+    [SerializeField] private Vector2 lerpPosSpeedMinMax;
+    [SerializeField] AnimationCurve lerpPosAnimCurve;
+
+    [Header("Control Audio Trail")]
+    private bool forward;
+    [SerializeField] private bool repeat, reverse;
+    [SerializeField] private bool useScaleAnim, useScaleCurve;
+    [SerializeField] private Vector2 scaleAnimMinMax;
+    [SerializeField] private AnimationCurve scaleAnimCurve;
+    [SerializeField] private float scaleAnimSpeed;
+    [SerializeField] private int scaleBand;
+    private float scaleTimer, currentScale;
 
     void Awake()
     {
-        num = numberStart;
         trailRenderer = GetComponent<TrailRenderer>();
-        transform.localPosition = CauculatePhyllotaxis(degree, dotScale, num);
 
+        trailMaterial = new Material(trailRenderer.material);
+        trailMaterial.SetColor("_TintColor", trailColor);
+        trailRenderer.material = trailMaterial;
+
+        num = numberStart;
+        currentScale = dotScale;
+        forward = true;
+
+        transform.localPosition = CauculatePhyllotaxis(degree, currentScale, num);
+        
         if(useLerp)
         {
-            StartLerping();
+            isLerping = true;
+            SetLerpPosition();
         }
     }
-    void FixedUpdate()
+
+    private void Update() 
     {
+        UseScaleAnimation();
         GenerateTrail();
+    }
+
+    private void SetLerpPosition()
+    {
+        phyllotaxisPos = CauculatePhyllotaxis(degree, currentScale, num);
+
+        startPosition = this.transform.localPosition;
+        endPosition = new Vector3(phyllotaxisPos.x, phyllotaxisPos.y, 0);
+
+        //Debug.Log("SetLerpPosition");
     }
 
     private Vector2 CauculatePhyllotaxis(float degree, float scale, int num)
@@ -49,46 +89,108 @@ public class PhyllotaxisTrail : MonoBehaviour
 
         return new Vector2(x, y);
     }
-
+    
     private void GenerateTrail()
     {
-        if(useLerp)
+        if(!useLerp)
         {
-            float timeSinceLerp = Time.time - timeStartLerping;
-            float LerpSmooth = timeSinceLerp / lerpInterval; // 0 ~ 1
-            
-            transform.localPosition = Vector3.Lerp(startPosition, endPosition, LerpSmooth);
-            
-            if(LerpSmooth >= 0.97f)
+            Vector2 phyllotaxisPosition = CauculatePhyllotaxis(degree, currentScale, num);
+            transform.localPosition = new Vector3(phyllotaxisPosition.x, phyllotaxisPosition.y, 0);
+
+            num += stepSize;
+            currentIteration++;
+            return;
+        }
+
+        UseLerp();
+        //Debug.Log("GenerateTrail");
+    }
+
+    private void UseLerp()
+    {
+        lerpPosSpeed = Mathf.Lerp(lerpPosSpeedMinMax.x, lerpPosSpeedMinMax.y, 
+                                                        lerpPosAnimCurve.Evaluate(AudioSample.frequencyBand[lerpPosBand]));
+
+        lerpPostimer += Time.deltaTime * lerpPosSpeed;
+        transform.localPosition = Vector3.Lerp(startPosition, endPosition, Mathf.Clamp01(lerpPostimer));
+
+        if(lerpPostimer >= 1)
+        {
+            lerpPostimer -= 1;
+
+            ForwardOrReverse();
+            ReverseTrailOrNot();
+        }
+    }
+
+    private void ReverseTrailOrNot()
+    {
+        if((currentIteration > 0) && (currentIteration < maxIteration))
+        {
+            SetLerpPosition();
+            //Debug.Log("currentIteration < maxIteration");
+
+            return;
+        }
+
+        if(repeat)
+        {
+            // 反向
+            if(reverse)
             {
-                transform.localPosition = endPosition;
+                Debug.Log("ReverseTrail");
+                forward = !forward;
+                SetLerpPosition();
+            }
+            
+            else
+            {
+                Debug.Log("start");
+                num = numberStart;
+                currentIteration = 0;
 
-                num += stepSize;
-                currentIteration++;
-
-                if(currentIteration <= maxIteration)
-                    StartLerping();
-                else
-                    isLerping = false;
+                SetLerpPosition();
             }
         }
         else
         {
-            Vector2 phyllotaxisPosition = CauculatePhyllotaxis(degree, dotScale, num);
-
-            transform.localPosition = new Vector3(phyllotaxisPosition.x, phyllotaxisPosition.y, 0);
-            num++;
-            
+            isLerping = false;
         }
     }
 
-    private void StartLerping()
+    private void ForwardOrReverse()
     {
-        isLerping = true;
-        timeStartLerping = Time.time;
+       if(forward)
+        {
+            num += stepSize;
+            currentIteration++;
+        }
+        else
+        {
+            num -= stepSize;
+            currentIteration--;
+        }
+    }
 
-        phyllotaxisPos = CauculatePhyllotaxis(degree, dotScale, num);
-        startPosition = this.transform.localPosition;
-        endPosition = new Vector3(phyllotaxisPos.x, phyllotaxisPos.y, 0);
+    private void UseScaleAnimation()
+    {
+        if(useScaleAnim)
+        {   
+            // auto control scale
+            if(!useScaleCurve)
+            {
+                currentScale = Mathf.Lerp(scaleAnimMinMax.x, scaleAnimMinMax.y, AudioSample.ControlBand[scaleBand]);
+                return;
+            }
+
+            // use animCurve to control
+            scaleTimer += (scaleAnimSpeed * AudioSample.ControlBand[scaleBand]) * Time.deltaTime;
+            if(scaleTimer >= 1)
+            {
+                scaleTimer -= 1;
+            }
+
+            currentScale = Mathf.Lerp(scaleAnimMinMax.x, scaleAnimMinMax.y, scaleAnimCurve.Evaluate(scaleTimer));
+        }
     }
 }
