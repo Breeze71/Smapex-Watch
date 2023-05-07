@@ -32,7 +32,7 @@ MonoBehaviour:
     overrideState: 0
     value: 7
   anamorphicRatio:
-    overrideState: 1
+    overrideState: 0
     value: 1
   color:
     overrideState: 0

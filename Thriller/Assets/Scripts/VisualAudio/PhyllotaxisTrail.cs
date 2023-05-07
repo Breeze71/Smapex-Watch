@@ -17,7 +17,7 @@ public class PhyllotaxisTrail : MonoBehaviour
 
     [Header("Lerp")]
     private bool isLerping;
-    private int currentIteration; 
+    [SerializeField] private int currentIteration; 
     private Vector3 startPosition, endPosition;
     [SerializeField] private bool useLerp;
     [SerializeField] private int maxIteration;
